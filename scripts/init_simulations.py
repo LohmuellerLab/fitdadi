@@ -156,7 +156,7 @@ def main():
             outfile.close()
         elif dfe == "neugamma":
             print "neutral+gamma mixture distribution unavailable with SFS_CODE at the moment, sorry..."
-    #N1, T1, N2, T2, Nc, Tc, theta, targetsize = demog_params[dataset]
+    #N1, T1, N2, T2, Nc/N2, Tc, theta, targetsize = demog_params[dataset]
     #nanc = theta/(4*mu*(targetsize/(1+mutratio)))*2
     #Ns = [1, N1, N2, Nc]
     #Ts = [4, T1, T2, Tc]
