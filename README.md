@@ -1,2 +1,5 @@
 # fitdadi
-Our code for using dadi to infer the DFE will be placed here
+
+This is an early version of our method to infer the DFE using dadi. 
+
+A detailed manual will be coming soon.X
