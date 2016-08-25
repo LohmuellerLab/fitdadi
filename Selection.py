@@ -266,6 +266,9 @@ def optimize_cons(p0, data, model_func, sel_dist, theta, lower_bound=None, upper
                  gtol=1e-6, multinom=False, maxiter=None, full_output=False,
                  func_args=[], func_kwargs={}, fixed_params=None, ll_scale=1,
                  output_file=None):
+    """
+    Constrained optimization needs a constraint function and bounds. 
+    """
     
     if output_file:
         output_stream = file(output_file, 'w')
