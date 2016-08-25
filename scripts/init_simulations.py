@@ -150,7 +150,7 @@ def main():
         if dfe == "gamma":
             outfilename = '{0}_{1}_n{2}_sfscode_gamma.sh'.format(dataset, mu, samplesize)
             outfile = open(outfilename, 'w')
-            alpha = numpy.log(Nc)/Tc
+            alpha = numpy.log(Nc/N2)/Tc
             outline = sfscode_init_gamma.format(int(round(Nanc)), samplesize, N1, N2/N1, T1+T2, alpha, T1+T2+Tc, dfe_params[0], 1/dfe_params[1])
             outfile.write(outline)
             outfile.close()
