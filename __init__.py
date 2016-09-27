@@ -17,6 +17,9 @@ import Misc
 import Numerics
 import PhiManip
 
+# adds the fitdadi stuff
+import Selection
+
 # import the triallele modules - numerics, integration, demographics
 try:
     import Triallele.numerics, Triallele.integration, Triallele.demographics
