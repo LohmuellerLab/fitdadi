@@ -122,7 +122,7 @@ class spectra:
                 self.spectra.append(sfs)
         
         #self.neu_spec = demo_sel_func(params+(0,), self.ns, self.pts)
-        self.neu_spec = func_ex(params+(0,), self.ns, self.pts_l)
+        self.neu_spec = func_ex(tuple(params)+(0,), self.ns, self.pts_l)
         self.extrap_x = self.spectra[0].extrap_x
         self.spectra = numpy.array(self.spectra)
         
