@@ -71,7 +71,7 @@ class spectra:
         else:
             self.pts_l = pts_l
         func_ex = Numerics.make_extrap_log_func(demo_sel_func)
-        self.params = params
+        self.params = tuple(params)
         
         if not mp: #for running with a single thread
             for ii,gamma in enumerate(self.gammas):
