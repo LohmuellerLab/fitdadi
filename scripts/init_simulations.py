@@ -55,14 +55,11 @@ def getprog():
 Which simulation program? Please enter a number.
 1. PReFerSIM (Ortega-Del Vecchyo et al. 2016)
 2. SLiM (Messer 2013)
-3. SFS_CODE (Hernandez)
         \n:""")
         if simprog == "1":
             return "prefersim"
         elif simprog == "2":
             return "slim"
-        elif simprog == "3":
-            return "sfscode"
         else:
             print "That's not a valid option."
 
@@ -143,6 +140,9 @@ def main():
             outfile.write(outline)
             outfile.close()
             print 'You must multiply (i.e. rescale) the SFS created by {0} by {1} and the SFS created by {2} by {3}, then sum those together to get the correct SFS.'.format('{0}_{1}_n{2}_prefersim_gamma.txt'.format(dataset, mu, samplesize), dfe_params[0], '{0}_{1}_n{2}_prefersim_neutral.txt'.format(dataset, mu, samplesize), (1-dfe_params[0]))
+<<<<<<< HEAD
+    #N1, T1, N2, T2, Nc, Tc, theta, targetsize = demog_params[dataset]
+=======
     elif simprog == "sfscode":
         dfe, dfe_params = params_d[dataset]["selection"][mu]
         outfilename = '{0}_{1}_n{2}_SLiM.txt'.format(dataset, mu, samplesize)
@@ -157,6 +157,7 @@ def main():
         elif dfe == "neugamma":
             print "neutral+gamma mixture distribution unavailable with SFS_CODE at the moment, sorry..."
     #N1, T1, N2, T2, Nc/N2, Tc, theta, targetsize = demog_params[dataset]
+>>>>>>> a456df057cfc0d604b6f97297be3fae6b10661a0
     #nanc = theta/(4*mu*(targetsize/(1+mutratio)))*2
     #Ns = [1, N1, N2, Nc]
     #Ts = [4, T1, T2, Tc]
@@ -244,15 +245,13 @@ initialize(){{
 {7} late() {{ p1.outputSample({8}); }}
 """
 
-sfscode_init_gamma = ("./sfs_code 1 1 -t 0.001 -L 1 5000 R -a C R "
-"-N {0} -n {1} -Td 0.0 {2} -Td 0.01 {3} -Tg {4} {5} "
-"-TE {6} -W 2 0 0 0 {7} {8} --additive --outfile dfe_sim.txt")
+sfscode_init_gamma = ("./sfs_code 1 200 -t 0.001 -L 10 5000 R -a C R "
+"-N 10085 -n 2600 -Td 0.0 0.098984772 -Td 0.01 1.051243 -Tg 0.087303612 292.97280352296781 "
+"-TE 0.098883812 -W 2 0 0 0 0.184 0.0004019467 --additive --outfile test.txt")
 
-#popn size, sample size, N1, N2/N1, T1+T2, ALPHA, T1+T2+T3, shape, 1/scale 
-
-#sfscode_init_neugamma = ("./sfs_code 1 200 -t 0.001 -L 10 5000 R -a C R "
-#"-N 10085 -n 2600 -Td 0.0 0.098984772 -Td 0.01 1.051243 -Tg 0.087303612 292.97280352296781 "
-#"-TE 0.098883812 -W 2 0 0 0 0.184 0.0004019467 --additive --outfile test.txt")
+sfscode_init_neugamma = ("./sfs_code 1 200 -t 0.001 -L 10 5000 R -a C R "
+"-N 10085 -n 2600 -Td 0.0 0.098984772 -Td 0.01 1.051243 -Tg 0.087303612 292.97280352296781 "
+"-TE 0.098883812 -W 2 0 0 0 0.184 0.0004019467 --additive --outfile test.txt")
 
 params_d = {
 "lucamp":{"demography":[0.08984,0.01,1.0512,0.07304,31.270,0.01158,4261.2,20043582],"selection":{"1.5":["neugamma",[0.164,0.338,367.7]],"1.8":["discrete",[0.278,0.027,0.211,0.352]]}},
