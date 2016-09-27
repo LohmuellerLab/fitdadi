@@ -11,18 +11,25 @@ logging.basicConfig()
 import Demographics1D
 import Demographics2D
 import Godambe
-import Hessian
 import Inference
 import Integration
 import Misc
 import Numerics
 import PhiManip
-import Selection
+
+# import the triallele modules - numerics, integration, demographics
+try:
+    import Triallele.numerics, Triallele.integration, Triallele.demographics
+except ImportError:
+    pass
+
 # Protect import of Plotting in case matplotlib not installed.
-#try:
-#    import Plotting
-#except ImportError:
-#    pass
+# 
+# Comment out these lines if using on the cluster. -Bernard
+try:
+    import Plotting
+except ImportError:
+    pass
 
 # We do it this way so it's easier to reload.
 import Spectrum_mod 
