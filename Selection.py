@@ -29,8 +29,7 @@ from dadi.Spectrum_mod import Spectrum
 
 class spectra:
     def __init__(self, params, ns, demo_sel_func, pts=500, pts_l=None, 
-                 Npts=500, steps=False, n=20170., 
-                 int_breaks=(0.000001, 0.00001, 0.0001, 0.001, 0.01, 1), 
+                 Npts=500, n=20170., int_breaks=None, 
                  int_bounds=(1e-4, 1000.), mp=False, echo=False, cpus=None):
         """
         params: optimized demographic parameters, don't include gamma 
@@ -52,7 +51,7 @@ class spectra:
         
         #create a vector of gammas that are log-spaced over sequential 
         #intervals or log-spaced over a single interval.
-        if steps:
+        if not (int_breaks is None):
             numbreaks = len(int_breaks)
             stepint = Npts/(numbreaks-1)
             self.gammas = []
@@ -70,7 +69,7 @@ class spectra:
                           self.pts+(self.pts/5)*2]
         else:
             self.pts_l = pts_l
-        func_ex = Numerics.make_extrap_log_func(demo_sel_func)
+        func_ex = Numerics.make_extrap_func(demo_sel_func)
         self.params = tuple(params)
         
         if not mp: #for running with a single thread

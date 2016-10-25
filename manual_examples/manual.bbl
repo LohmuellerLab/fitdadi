@@ -1,0 +1,21 @@
+\begin{thebibliography}{1}
+
+\bibitem{gutenkunst2009}
+Ryan~N Gutenkunst, Ryan~D Hernandez, Scott~H Williamson, and Carlos~D
+  Bustamante.
+\newblock Inferring the joint demographic history of multiple populations from
+  multidimensional snp frequency data.
+\newblock {\em PLoS Genet}, 5(10):e1000695, 2009.
+
+\bibitem{ortega2016}
+Diego Ortega-Del~Vecchyo, Clare~D Marsden, and Kirk~E Lohmueller.
+\newblock Prefersim: Fast simulation of demography and selection under the
+  poisson random field model.
+\newblock {\em Bioinformatics}, page btw478, 2016.
+
+\bibitem{haller2016}
+Benjamin~C Haller and Philipp~W Messer.
+\newblock Slim 2: Flexible, interactive forward genetic simulations.
+\newblock {\em Molecular Biology and Evolution}, page msw211, 2016.
+
+\end{thebibliography}

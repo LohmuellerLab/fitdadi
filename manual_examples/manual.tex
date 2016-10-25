@@ -1,0 +1,177 @@
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{cite}
+
+\usepackage{hyperref}
+\hypersetup{colorlinks=true}
+\usepackage{listings}
+\usepackage{color}
+ 
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+ 
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+ 
+\lstset{style=mystyle}
+
+
+\title{Utilizing fit$\partial$a$\partial$i: a short how-to guide}
+\author{Bernard Kim\\ \href{mailto:bernard.kim@ucla.edu}{bernard.kim@ucla.edu}}
+\date{Updated: \today}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+This short guide outlines how to utilize \href{https://github.com/LohmuellerLab/fit$\partial$a$\partial$i}{the code we have made available} for inferring of the distribution of fitness effects (DFE). This code serves as an add-on module for the package $\partial$a$\partial$i \cite{gutenkunst2009}, which is primarily used for demographic inference.
+
+The code examples shown here are meant to work with the example dataset. For simplicity's sake, I have generated an example dataset with PReFerSIM \cite{ortega2016}. Furthermore, we will work with a relatively small sample size and simple demographic model so that the examples can be worked through quickly on a laptop. Lastly, all the example code is provided in the \texttt{example.py} script as well as in this document.
+
+Another important thing to note: $\partial$a$\partial$i characterizes genotype fitnesses as: $1$, $1+2sh$, and $1+2s$, where $1+2sh$ is the fitness of the heterozygote. Furthermore, the DFEs inferred are scaled in terms of the ancestral population size rather than $s$: $\gamma=2N_{A}s$. This means that the selection coefficients must sometimes be rescaled, for instance when using the program SLiM \cite{haller2016}, so the genotype fitnesses are equivalent.
+
+If you have any additional questions, please feel free to email us: Bernard Kim \\(\href{mailto:bernard.kim@ucla.edu}{bernard.kim@ucla.edu}) or Kirk Lohmueller (\href{mailto:klohmueller@ucla.edu}{klohmueller@ucla.edu}).
+
+\section{Installation}
+
+$\partial$a$\partial$i can be downloaded from the Gutenkunst Lab's \href{https://bitbucket.org/gutenkunstlab/dadi/}{BitBucket site}. Once you have $\partial$a$\partial$i, there are two easy ways to utilize the fit$\partial$a$\partial$i module. The first method allows you to set up fit$\partial$a$\partial$i so it is installed with the $\partial$a$\partial$i code. To do this, you copy \texttt{Selection.py} and \texttt{\_\_init\_\_.py} into the \texttt{./dadi/dadi} directory before installing $\partial$a$\partial$i with \texttt{python setup.py install}. Note, it may be useful to comment out the line \texttt{import matplotlib} in \texttt{\_\_init\_\_.py} if you are trying to use $\partial$a$\partial$i on a cluster. Alternately, you can import our code separately. To do this, you should install $\partial$a$\partial$i in the standard manner. Copy \texttt{Selection.py} into your working directory. Then, our module can be loaded by including the line \texttt{import Selection.py} into your $\partial$a$\partial$i/Python script. 
+
+The latter method is the way in which the example script is set up:
+
+\lstinputlisting[language=Python, firstline=3, lastline=5]{example.py}
+
+Note that in order to run $\partial$a$\partial$i with the example script you must also copy \texttt{Selection.py} into the same directory as the example script.
+
+\section{Example dataset}
+The example dataset used in the example script was generated with forward simulations under the PRF model, with the simulation program PReFerSIM. Additionally, we will assume we know the true underlying demographic model rather than trying to fit one.
+
+This dataset is summarized with a site frequency spectrum, has sample size $2n=250$ (125 diploids), and is saved in the file \texttt{sample.sfs} file. It was generated with a single size change demography and an underlying gamma DFE. Specifically, a population of size $N=10,000$ diploids expands to $20,000$ diploids 1000 generations ago and the gamma DFE has shape parameter \textbf{0.186} and scale paramter \textbf{686.7}. This is the same gamma DFE that we inferred from the 1000 Genomes EUR dataset, but the scale parameter has been rescaled to the ancestral population size of 10,000 diploids. Finally, the amount of diversity in the sample dataset matches $\theta_{NS}=4000$.
+
+\section{Demographic inference}
+
+Because the usage of $\partial$a$\partial$i for demographic inference is extensively documented, it will not be discussed in detail here. In practice, we find a demographic model that fits the synonymous sites reasonably well works well for inference of the DFE.  
+
+Briefly, we fit a demographic model to synonymous sites, which are assumed to be evolving in a neutral or nearly neutral manner. We believe this accurately represents the effects of linked selection and population structure, and condition upon this demographic model to fit the DFE. However, note the assumption of neutral synonymous variants may not hold for species with large population sizes, since this will increase the efficacy of selection on mutations with small fitness effects.
+
+Our sample dataset was generated with a two epoch (single size change) demography. Although we are skipping the demographic inference, the following $\partial$a$\partial$i function describes a two epoch demographic model.
+
+\lstinputlisting[language=Python, firstline=9, lastline=16]{example.py}
+
+We will assume we infer a 2-fold population expansion 0.05*2$N_A$ generations ago, where $N_A$ is the ancestral population size. Therefore, the parameter vector is: \texttt{[nu, T]}.
+
+\lstinputlisting[language=Python, firstline=19, lastline=19]{example.py}
+
+Again, we assume that the nonsynonymous mutation rate, $\theta_{NS}=4,000$. In practice, we computed the synonymous mutation rate, $\theta_S$, by using the multinomial likelihood to fit the demographic model. Because that method only fits the proportional SFS, $\theta_S$ is estimated with the \texttt{dadi.Inference.optimal\_sfs\_scaling} method. Then, we multiplied $\theta_S$ by 2.31 to get $\theta_{NS}$, $\theta_S * 2.31 = \theta_{NS}$. Remember that our sample size is 125 diploids (250 chromosomes).
+
+\lstinputlisting[language=Python, firstline=20, lastline=21]{example.py}
+
+\section{Pre-computing of the SFS for many $\gamma$}
+
+Next, we must generate a bunch of frequency spectra for a range of gammas. The demographic function is modified to allow for single selection coefficients. Here each selection coefficient is scaled in terms of the ancestral popualation size, $\gamma=2N_As$. In other words, if \texttt{gamma=0}, this function is the same as the original demographic function.
+
+\lstinputlisting[language=Python, firstline=24, lastline=30]{example.py}
+
+Then, we generate the frequency spectra for a range of gammas. The following code generates expected frequency spectra, conditional on the demographic model fit to synonymous sites, over \texttt{Npts} log-spaced points over the range of \texttt{int\_bounds}. Additionally, the \texttt{mp=True} argument tells fit$\partial$a$\partial$i whether it should utilize multiple cores/threads, which is convenient since this step takes the longest. If the argument \texttt{cpus} is passed, it will utilize that many cores, but if \texttt{mp=True} and no \texttt{cpus} argument is passed, it will use \texttt{n-1} threads, where \texttt{n} is the number of threads available. If \texttt{mp=False}, each SFS will be computed in serial.
+
+\lstinputlisting[language=Python, firstline=33, lastline=36]{example.py}
+
+Another manner in which this can be done is multiple log-spaced grids over some predetermined breaks. While this method is almost the same as the previous, this method is more appropriate for discretely binned DFEs. For example, if I were to create discrete bins at the breaks $\gamma=[0.1, 1, 100]$, I would use the following command, importantly, passing a specific \texttt{int\_breaks}.
+
+\lstinputlisting[language=Python, firstline=39, lastline=43]{example.py}
+
+Note, one error message that will come up often with very negative selection coefficients is: \\ \\
+\texttt{WARNING:Numerics:Extrapolation may have failed. Check resulting frequency spectrum for unexpected results.} \\
+
+One way to fix this is by increasing the \texttt{pts\_l} grid sizes -- this will need to increase as the sample size increases and/or if the integration is done over a range which includes stronger selection coefficients. \texttt{dadi.Numerics.make\_extrap\_func} is used to extrapolate the frequency spectra to infinitely many gridpoints, but will sometimes return tiny negative values (often $|X_i|<1e-50$) due to floating point rounding errors. Using \texttt{dadi.Numerics.make\_extrap\_log\_func} will sometimes return \texttt{Inf} values and is harder to work with. In practice, it seems that the tiny negative values do not affect the integration because they are insignificant, but if the error message appears it is good to manually double-check each SFS. Alternately, small the small negative values can be manually rounded to 0. 
+
+In the example, the pre-computed SFSs are saved in the list \texttt{spectra.spectra}. For convenience's sake, the \texttt{spectra} object can be pickled.
+
+\lstinputlisting[language=Python, firstline=47, lastline=48]{example.py}
+
+\section{Fitting a DFE}
+
+\subsection{Fitting simple DFEs}
+
+Fitting a DFE is the quickest part of this procedure, especially for simple distributions such as the gamma distribution. If you wish to get an SFS for a specific DFE, you can use the \texttt{integrate} method that is built into the spectra object: \texttt{spectra.integrate(sel\_params, sel\_dist, theta)}. Another option is to use the \texttt{spectra.integrate\_norm} method. The former does not normalize the DFE and the second normalizes the DFE. We chose to use the former and assumed that mutations with selection coefficients outside of the range we integrated over were effectively lethal, that is, not seen in the sample. Note that we integrated over a large range of gammas for the paper than the example. \texttt{sel\_params} is a list containing the DFE parameters, \texttt{sel\_dist} is the distribution used for the DFE, and \texttt{theta} is $\theta_{NS}$. To compute the expected SFS for our simulations with the true parameter values, we would use \texttt{spectra.integrate([0.186, 686.7], Selection.gamma\_dist, 4000.)}.
+
+First, load the sample data:
+
+\lstinputlisting[language=Python, firstline=51, lastline=51]{example.py}
+
+Similar to the way in which vanilla $\partial$a$\partial$i is used, you should have a starting guess at the parameters. Set an upper and lower bound. Perturb the parameters to select a random starting point, then fit the DFE. This should be done multiple times from different starting points. We use the \texttt{spectra.integrate} methods to generate the expected SFSs during each step of the optimization. The following lines of code fit a gamma DFE to the example data:
+
+\lstinputlisting[language=Python, firstline=55, lastline=64]{example.py}
+
+If this runs correctly, you should infer something close to, but not exactly, the true DFE. The final results will be stored in \texttt{popt}: \\
+
+\texttt{>>> popt} \\
+\texttt{[-678.338    , array([ 0.187071   ,  666.092    ])]} \\
+
+The expected SFS at the MLE can be computed with:
+
+\lstinputlisting[language=Python, firstline=66, lastline=66]{example.py}
+
+\subsection{Fitting complex DFEs}
+
+Fitting complex distributions is similar to fitting simple DFEs, but requires a few additional steps. The following code can be used to fit a neutral+gamma mixture DFE to the data. Note that the gamma DFE should fit better if assessing model fit using AIC. Additionally, we assume that every selection coefficient $\gamma < 1e-4$ is effectively neutral. Since this is a mixture of two distributions, we infer the proportion of neutral mutations, $p_{neu}$, and assume the complement of that (i.e. $1-p_{neu}$) is the proportion of new mutations drawn from a gamma distribution. Therefore, the parameter vector should be: [$p_{neu}$,shape, scale]. The gamma DFE is still the true DFE.
+
+\lstinputlisting[language=Python, firstline=69, lastline=76]{example.py}
+
+Then, the custom DFE needs to be vectorized. This is easily done with the \texttt{numpy.frompyfunc} function.
+
+\lstinputlisting[language=Python, firstline=79, lastline=79]{example.py}
+
+Fit the DFE as before, accounting for the extra parameter to describe the proportion of neutral new mutations. Note that $p_{neu}$ is explicitly bounded to be $0 < p_{neu} \leq 1$.
+
+\lstinputlisting[language=Python, firstline=81, lastline=89]{example.py}
+
+If this has run properly, your result should look like the following: \\ \\
+\texttt{>>> popt} \\
+\texttt{[-677.8269385133997, array([  1.03223734e-01,   1.96417527e-01,   2.97952185e+02])]} \\
+
+Another way to approach this problem is by defining the neutral+gamma DFE as a function of four parameters instead of assuming the two are complementary. While this is unnecessary for the neutral+gamma distribution since we bounded $p_{neu}$ to be between 0 and 1, it becomes necessary for mixtures of three or more distributions. However, the principles will be the same as shown here. 
+
+First, define the neutral+gamma DFE as a function with parameter vector: [$p_{neu}$,$p_{gamma}$,shape, scale]. 
+
+\lstinputlisting[language=Python, firstline=92, lastline=99]{example.py}
+
+Here we do not explicitly set $p_{neu} + p_{gamma} = 1$, so we need to apply some additional constraints to enforce this. A function that equals 0 when the constraint is satisfied should be used:
+
+\lstinputlisting[language=Python, firstline=102, lastline=103]{example.py}
+
+In other words, the constraint is satisfied when \texttt{sum([$p_{neu}$,$p_{gamma}$,shape, scale][0:-2])=1}, that is, when \texttt{sum([$p_{neu}$,$p_{gamma}$])=1}.
+
+Then, use the function \texttt{Selection.optimize\_cons} to fit the DFE. This function is the same as \texttt{Selection.optimize} except that it requires the constraint function to be passed as an additional argument.
+
+\lstinputlisting[language=Python, firstline=105, lastline=116]{example.py}
+
+If this has run properly, the result should look familiar: \\ \\
+\texttt{>>> popt} \\
+\texttt{[-677.82324119243094, array([  1.08255105e-01,   8.91744895e-01,   1.97274303e-01, } \\
+\texttt{2.84605179e+02])]}
+
+\bibliography{refs}{}
+\bibliographystyle{unsrt}
+
+\end{document}
