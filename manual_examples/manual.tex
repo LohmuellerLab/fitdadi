@@ -92,7 +92,7 @@ Next, we must generate a bunch of frequency spectra for a range of gammas. The d
 
 \lstinputlisting[language=Python, firstline=24, lastline=30]{example.py}
 
-Then, we generate the frequency spectra for a range of gammas. The following code generates expected frequency spectra, conditional on the demographic model fit to synonymous sites, over \texttt{Npts} log-spaced points over the range of \texttt{int\_bounds}. Additionally, the \texttt{mp=True} argument tells fit$\partial$a$\partial$i whether it should utilize multiple cores/threads, which is convenient since this step takes the longest. If the argument \texttt{cpus} is passed, it will utilize that many cores, but if \texttt{mp=True} and no \texttt{cpus} argument is passed, it will use \texttt{n-1} threads, where \texttt{n} is the number of threads available. If \texttt{mp=False}, each SFS will be computed in serial.
+Then, we generate the frequency spectra for a range of gammas. The following code generates expected frequency spectra, conditional on the demographic model fit to synonymous sites, over \texttt{Npts} log-spaced points over the range of \texttt{int\_bounds}. Additionally, the \texttt{mp=True} argument tells fit$\partial$a$\partial$i whether it should utilize multiple cores/threads, which is convenient since this step takes the longest. If the argument \texttt{cpus} is passed, it will utilize that many cores, but if \texttt{mp=True} and no \texttt{cpus} argument is passed, it will use \texttt{n-1} threads, where \texttt{n} is the number of threads available. If \texttt{mp=False}, each SFS will be computed in serial. This step should take 1-10 minutes depending on your CPU.
 
 \lstinputlisting[language=Python, firstline=33, lastline=36]{example.py}
 
