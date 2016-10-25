@@ -66,14 +66,14 @@ popt = Selection.optimize_log(p0, data, spectra.integrate, Selection.gamma_dist,
 model_sfs = spectra.integrate(popt[1], Selection.gamma_dist, theta_ns)
 
 #one possible characterization of the neutral+gamma DFE
-def neugamma(mgamma, p, alpha, beta):
+def neugamma(mgamma, pneu, alpha, beta):
     mgamma=-mgamma
     #assume anything with gamma<1e-4 is neutral
-    if (0 <= mgamma) and (mgamma < -1e-4):
-        return p/(-smallgamma) + (1-p)*dadi.Selection.gamma_dist(-mgamma, alpha, 
-                                                                 beta)
+    if (0 <= mgamma) and (mgamma < 1e-4):
+        return pneu/(1e-4) + (1-pneu)*Selection.gamma_dist(-mgamma, alpha, 
+                                                           beta)
     else:
-        return dadi.Selection.gamma_dist(-mgamma, alpha, beta) * (1-p)
+        return Selection.gamma_dist(-mgamma, alpha, beta) * (1-pneu)
 
 #vectorize custom DFE
 neugamma_vec = numpy.frompyfunc(neugamma, 4, 1)
@@ -92,11 +92,10 @@ popt = Selection.optimize_log(p0, data, spectra.integrate, neugamma_vec,
 def neugamma(mgamma, pneu, pgamma, alpha, beta):
     mgamma=-mgamma
     #assume anything with gamma<1e-4 is neutral
-    if (0 <= mgamma) and (mgamma < -1e-4):
-        return pneu/(-smallgamma) + pgamma*dadi.Selection.gamma_dist(-mgamma,
-                                                                     alpha, beta)
+    if (0 <= mgamma) and (mgamma < 1e-4):
+        return pneu/(1e-4) + pgamma*Selection.gamma_dist(-mgamma, alpha, beta)
     else:
-        return dadi.Selection.gamma_dist(-mgamma, alpha, beta) * pgamma
+        return Selection.gamma_dist(-mgamma, alpha, beta) * pgamma
 
 #define a constraint function. At MLE, consfunc = 0
 def consfunc(x, *args):
