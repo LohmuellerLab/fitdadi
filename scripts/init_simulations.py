@@ -108,17 +108,17 @@ def main():
         dfe, dfe_params = params_d[dataset]["selection"][mu]
         demofilename = '{0}_{1}_n{2}_prefersim_demo.txt'.format(dataset, mu, samplesize)
         Ns = [1, N1, N2, Nc]
-        Ns = [x*Nanc for x in Ns]
+        Ns = [x*2*Nanc for x in Ns]
         Ts = [8*Nanc, (T1)*nanc, T2*nanc, Tc*nanc]
         Ns = [int(round(x)) for x in Ns]
         Ts = [int(round(x)) for x in Ts]
         outfile = open(demofilename, 'w')
         for size, time in zip(Ns[:-1],Ts[:-1]):
-            outline = '{0}. {1}.\n'.format(size, time)
+            outline = '{0} {1}\n'.format(size, time)
             outfile.write(outline)
         nt = lambda t: Ns[2]*numpy.exp(numpy.log(Ns[3]/Ns[2])*(t)/(Ts[3]))
         for i in range(0,498):
-            outline = '{0}. {1}.\n'.format(int(round(nt(i))),1)
+            outline = '{0} {1}\n'.format(int(round(nt(i))),1)
             outfile.write(outline)
         outfile.close()
         if dfe == "gamma":
