@@ -55,11 +55,14 @@ def getprog():
 Which simulation program? Please enter a number.
 1. PReFerSIM (Ortega-Del Vecchyo et al. 2016)
 2. SLiM (Messer 2013)
+3. SFS_CODE (Hernandez 2008)
         \n:""")
         if simprog == "1":
             return "prefersim"
         elif simprog == "2":
             return "slim"
+        elif simprog == "3":
+            return "sfscode"
         else:
             print "That's not a valid option."
 
@@ -94,12 +97,12 @@ def main():
         if dfe == "gamma":
             shape, scale = dfe_params
             scale = scale/(2.*nanc)
-            mean = -shape*scale
+            mean = -2*shape*scale
             outline = slim_init_gamma.format(mu, mean, shape, Ns[0], demog_file, Ts[-1], samplesize)
         elif dfe == "neugamma":
             pneu, shape, scale = dfe_params
             scale = scale/(2.*nanc)
-            mean = -shape*scale
+            mean = -2*shape*scale
             outline = slim_init_neugamma.format(mu, mean, shape, (1-pneu), pneu, Ns[0], demog_file, Ts[-1], samplesize)
         outfile.write(outline)
         outfile.close()
@@ -140,9 +143,6 @@ def main():
             outfile.write(outline)
             outfile.close()
             print 'You must multiply (i.e. rescale) the SFS created by {0} by {1} and the SFS created by {2} by {3}, then sum those together to get the correct SFS.'.format('{0}_{1}_n{2}_prefersim_gamma.txt'.format(dataset, mu, samplesize), dfe_params[0], '{0}_{1}_n{2}_prefersim_neutral.txt'.format(dataset, mu, samplesize), (1-dfe_params[0]))
-<<<<<<< HEAD
-    #N1, T1, N2, T2, Nc, Tc, theta, targetsize = demog_params[dataset]
-=======
     elif simprog == "sfscode":
         dfe, dfe_params = params_d[dataset]["selection"][mu]
         outfilename = '{0}_{1}_n{2}_SLiM.txt'.format(dataset, mu, samplesize)
@@ -156,23 +156,6 @@ def main():
             outfile.close()
         elif dfe == "neugamma":
             print "neutral+gamma mixture distribution unavailable with SFS_CODE at the moment, sorry..."
-    #N1, T1, N2, T2, Nc/N2, Tc, theta, targetsize = demog_params[dataset]
->>>>>>> a456df057cfc0d604b6f97297be3fae6b10661a0
-    #nanc = theta/(4*mu*(targetsize/(1+mutratio)))*2
-    #Ns = [1, N1, N2, Nc]
-    #Ts = [4, T1, T2, Tc]
-    #Ns = [round(x*nanc) for x in Ns]
-    #Ts = [round(x*nanc) for x in Ts]
-    #
-    #for N, T in zip(Ns[0:3], Ts[0:3]):
-    #    outline = '{0} {1}\n'.format(N, T)
-    #    outfile.write(outline)
-    #
-    #nt = lambda t: Ns[2]*numpy.exp(numpy.log(Ns[3]/Ns[2])*t/Ts[3])
-    #
-    #for t in range(0, int(Ts[3])+1):
-    #    outline = '{0} 1.\n'.format(round(nt(t)))
-    #    outfile.write(outline)
 
 prefersim_init_gamma = """MutationRate: 2000
 DemographicHistory: {0} 
