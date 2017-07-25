@@ -96,13 +96,13 @@ def main():
         demog_file = '\n'.join(['{0} {{ p1.setSubpopulationSize({1}); }}'.format(y,x) for x,y in zip(Ns[1:],Ts)])
         if dfe == "gamma":
             shape, scale = dfe_params
-            scale = scale/(2.*nanc)
-            mean = -2*shape*scale
+            scale = scale/nanc
+            mean = -2*shape*scale #rescaling by 2 for slim
             outline = slim_init_gamma.format(mu, mean, shape, Ns[0], demog_file, Ts[-1], samplesize)
         elif dfe == "neugamma":
             pneu, shape, scale = dfe_params
-            scale = scale/(2.*nanc)
-            mean = -2*shape*scale
+            scale = scale/nanc
+            mean = -2*shape*scale #rescaling by 2 for slim
             outline = slim_init_neugamma.format(mu, mean, shape, (1-pneu), pneu, Ns[0], demog_file, Ts[-1], samplesize)
         outfile.write(outline)
         outfile.close()
@@ -213,7 +213,7 @@ initialize(){{
     initializeMutationType("m2", 0.5, "f", 0.0);
     
     // g1 genomic element type: uses mixture of gamma and neutral
-    initializeGenomicElementType("g1", c(m1,n2), c({3},{4}));
+    initializeGenomicElementType("g1", c(m1,m2), c({3},{4}));
 
     // uniform chromosome of length 1 Mb with uniform recombination
     initalizeGenomicElement(g1, 0, 999999);
