@@ -88,7 +88,7 @@ Again, we assume that the population scaled nonsynonymous mutation rate, $\theta
 
 \section{Pre-computing of the SFS for many $\gamma$}
 
-Next, we must generate frequency spectra for a range of gammas. The demographic function is modified to allow for a single selection coefficient. Here, each selection coefficient is scaled with the ancestral population size, $\gamma=2N_As$. In other words, if \texttt{gamma=0}, this function is the same as the original demographic function.
+Next, we must generate frequency spectra for a range of gammas. The demographic function is modified to allow for a single selection coefficient. Here, each selection coefficient is scaled with the ancestral population size, $\gamma=2N_As$. In other words, if $s$ is constant through the whole simulation, the same $gamma$ should be used throughout the demographic function. If \texttt{gamma=0}, this function is the same as the original demographic function. 
 
 \lstinputlisting[language=Python, firstline=24, lastline=30]{example.py}
 
@@ -96,14 +96,14 @@ Then, we generate the frequency spectra for a range of gammas. The following cod
 
 \lstinputlisting[language=Python, firstline=33, lastline=36]{example.py}
 
-Another manner in which this can be done is multiple log-spaced grids over some predetermined breaks. While this method is almost the same as the previous, this method is more appropriate for discretely binned DFEs. For example, if I were to create discrete bins at the breaks $\gamma=[0.1, 1, 100]$, I would use the following command, importantly, passing a specific \texttt{int\_breaks}.
+Another manner in which this can be done is multiple log-spaced grids over some predetermined breaks. While this method is almost the same as the previous, this method is more appropriate for discretely binned DFEs. For example, if we were to create discrete bins at the breaks $\gamma=[0.1, 1, 100]$, we would use the following command, importantly, passing a specific \texttt{int\_breaks}.
 
 \lstinputlisting[language=Python, firstline=39, lastline=43]{example.py}
 
 Note, one error message that will come up often with very negative selection coefficients is: \\ \\
 \texttt{WARNING:Numerics:Extrapolation may have failed. Check resulting frequency spectrum for unexpected results.} \\
 
-One way to fix this is by increasing the \texttt{pts\_l} grid sizes -- this will need to increase as the sample size increases and/or if the integration is done over a range which includes stronger selection coefficients. \texttt{dadi.Numerics.make\_extrap\_func} is used to extrapolate the frequency spectra to infinitely many gridpoints, but will sometimes return tiny negative values (often $|X_i|<1e-50$) due to floating point rounding errors. Using \texttt{dadi.Numerics.make\_extrap\_log\_func} will sometimes return \texttt{Inf} values and is harder to work with. In practice, it seems that the tiny negative values do not affect the integration because they are insignificant, but if the error message appears it is good to manually double-check each SFS. Alternately, the small negative values can be manually approximated with 0. 
+One way to fix this is by increasing the \texttt{pts\_l} grid sizes -- this will need to increase as the sample size increases and/or if the integration is done over a range which includes stronger selection coefficients. \texttt{dadi.Numerics.make\_extrap\_func} is used to extrapolate the frequency spectra to infinitely many gridpoints, but will sometimes return tiny negative values (often $|X_i|<1e-50$) due to floating point rounding errors. Using \texttt{dadi.Numerics.make\_extrap\_log\_func} will sometimes return \texttt{Inf} values and care should be taken that these numerical errors do not propagate to downstream steps of the analysis. In practice, it seems that the tiny negative values do not affect the integration because they are insignificant, but if the error message appears the SFS should be manually double-checked. Alternately, the small negative values can be manually replaced with 0. 
 
 In the example, the pre-computed SFSs are saved in the list \texttt{spectra.spectra}. For convenience's sake, the \texttt{spectra} object can be pickled.
 
@@ -134,7 +134,7 @@ The expected SFS at the MLE can be computed with:
 
 \subsection{Fitting complex DFEs}
 
-Fitting complex distributions is similar to fitting simple DFEs, but requires a few additional steps. The following code can be used to fit a neutral+gamma mixture DFE to the data. Note that the gamma DFE should fit better if assessing model fit using AIC. Additionally, we assume that every selection coefficient $\gamma < 1e-4$ is effectively neutral. Since this is a mixture of two distributions, we infer the proportion of neutral mutations, $p_{neu}$, and assume the complement of that (i.e. $1-p_{neu}$) is the proportion of new mutations drawn from a gamma distribution. Therefore, the parameter vector should be: [$p_{neu}$,shape, scale]. The gamma DFE is still the true DFE.
+Fitting complex distributions is similar to fitting simple DFEs, but requires a few additional steps, outlined in the following lines of code. Here, we are fitting a neutral+gamma DFE to an SFS generated under a gamma DFE just for the sake of the example. Additionally, we assume that every selection coefficient $\gamma < 1e-4$ is effectively neutral. Since this is a mixture of two distributions, we infer the proportion of neutral mutations, $p_{neu}$, and assume the complement of that (i.e. $1-p_{neu}$) is the proportion of new mutations drawn from a gamma distribution. Therefore, the parameter vector is: [$p_{neu}$,shape, scale].
 
 \lstinputlisting[language=Python, firstline=69, lastline=76]{example.py}
 
@@ -166,7 +166,7 @@ Then, use the function \texttt{Selection.optimize\_cons} to fit the DFE. This fu
 
 \lstinputlisting[language=Python, firstline=104, lastline=115]{example.py}
 
-If this has run properly, the result should look roughly familiar: \\ \\
+The result is roughly similar to the previous method: \\ \\
 \texttt{>>> popt} \\
 \texttt{[-678.40252289901571, array([  1.00000000e-03,   9.99000000e-01,   1.85534565e-01,} \\
 \texttt{6.93897711e+02])]}
