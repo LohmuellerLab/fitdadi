@@ -88,7 +88,7 @@ Again, we assume that the population scaled nonsynonymous mutation rate, $\theta
 
 \section{Pre-computing of the SFS for many $\gamma$}
 
-Next, we must generate frequency spectra for a range of gammas. The demographic function is modified to allow for a single selection coefficient. Here, each selection coefficient is scaled with the ancestral population size, $\gamma=2N_As$. In other words, if $s$ is constant through the whole simulation, the same \texttt{gamma} should be used throughout the demographic function. If \texttt{gamma=0}, this function is the same as the original demographic function. 
+Next, we must generate frequency spectra for a range of gammas. The demographic function is modified to allow for a single selection coefficient. Here, each selection coefficient is scaled with the ancestral population size, $\gamma=2N_As$. In other words, if $s$ is constant, the same \texttt{gamma} should be used throughout the demographic function. If \texttt{gamma=0}, this function is the same as the original demographic function. 
 
 \lstinputlisting[language=Python, firstline=24, lastline=30]{example.py}
 
